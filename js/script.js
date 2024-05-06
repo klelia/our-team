@@ -3,55 +3,13 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
-      team: [
-        {
-          id: 1,
-          name: "Wayne",
-          surname: "Barnett",
-          role: "Founder & CEO",
-          userImg: "wayne-barnett-founder-ceo.jpg",
-        },
-        {
-          id: 2,
-          name: "Angela",
-          surname: "Caroll",
-          role: "Chief Editor",
-          userImg: "angela-caroll-chief-editor.jpg",
-        },
-        {
-          id: 3,
-          name: "Walter",
-          surname: "Gordon",
-          role: "Office Manager",
-          userImg: "walter-gordon-office-manager.jpg",
-        },
-        {
-          id: 4,
-          name: "Angela",
-          surname: "Lopez",
-          role: "Social Media Manager",
-          userImg: "angela-lopez-social-media-manager.jpg",
-        },
-        {
-          id: 5,
-          name: "Scott",
-          surname: "Estrada",
-          role: "Developer",
-          userImg: "scott-estrada-developer.jpg",
-        },
-        {
-          id: 6,
-          name: "Barbara",
-          surname: "Ramos",
-          role: "Graphic Designer",
-          userImg: "barbara-ramos-graphic-designer.jpg",
-        },
-      ],
-      lastId: 6,
+      team: [],
+      apiUrl: "server.php",
+      lastId: null,
       newMember: {
         name: "",
         role: "",
-        imgUrl: "",
+        userImg: "",
       },
       editIndex: null,
       newrole: "",
@@ -62,12 +20,34 @@ createApp({
       const member = { ...this.newMember };
       this.newMember = {
         name: "",
+        surname: "",
         role: "",
-        imgUrl: "",
+        userImg: "",
       };
       this.lastId += 1;
       member.id = this.lastId;
-      this.team.push(member);
+
+      const data = new FormData();
+      // data.append("id", member.id);
+      // data.append("name", member.name);
+      // data.append("surname", member.surname);
+      // data.append("role", member.role);
+      // data.append("userImg", member.userImg);
+      for (let key in member) {
+        data.append(key, member[key]);
+      }
+
+      axios
+        .post(this.apiUrl, data)
+        .then((res) => {
+          console.log(res.data);
+          this.team = res.data;
+          this.lastId = this.team.length - 1;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {});
     },
     setEdit(index) {
       this.editIndex = index;
@@ -77,13 +57,43 @@ createApp({
       this.editIndex = null;
       if (this.newrole) {
         this.team[index].role = this.newrole;
+        const data = this.team[index];
+        data.idx = index;
+        axios.put(this.apiUrl, data).then((res) => {
+          console.log(res.data);
+          this.team = res.data;
+        });
+
         this.newrole = "";
       }
     },
     deleteMember(event, index) {
       event.preventDefault();
-      this.team.splice(index, 1);
+      //this.team.splice(index, 1);
+      const data = {
+        id: index,
+      };
+      axios.delete(this.apiUrl, { data }).then((res) => {
+        console.log(res.data);
+        this.team = res.data;
+        this.lastId = this.team.length - 1;
+      });
+    },
+    getData() {
+      axios
+        .get(this.apiUrl)
+        .then((res) => {
+          console.log(res.data);
+          this.team = res.data;
+          this.lastId = this.team.length - 1;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {});
     },
   },
-  created() {},
+  created() {
+    this.getData();
+  },
 }).mount("#app");

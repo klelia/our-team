@@ -40,5 +40,12 @@
         "surname": "Ramos",
         "role": "Graphic Designer",
         "userImg": "barbara-ramos-graphic-designer.jpg"
+    },
+    {
+        "id": 7,
+        "name": "Clelia",
+        "surname": "Fradella",
+        "role": "aaaa",
+        "userImg": "aaa"
     }
 ]

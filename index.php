@@ -21,7 +21,7 @@
 <body>
     <div id="app">
         <header class="container py-4">
-            <h1 class="text-center">Our Team</h1>
+            <h1 class="text-center">Our Team </h1>
         </header>
         <main class="container">
             <div class="row gy-4">
